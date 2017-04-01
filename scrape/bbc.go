@@ -2,16 +2,20 @@ package scrape
 
 import (
     "bitbucket.org/utostan/mulukscraper/data"
+    "bitbucket.org/utostan/mulukscraper/image"
     "github.com/PuerkitoBio/goquery"
     "time"
     "strconv"
+    _"fmt"
+    "strings"
+
 )
 
 type Bbc struct {
     Src *data.Source
 }
 
-func crawl(url string, ch chan *data.News, chDone chan bool) {
+func (bbc *Bbc) crawl(url string, ch chan *data.News, chDone chan bool) {
     defer func() {
         chDone <- true
     }()
@@ -32,6 +36,13 @@ func crawl(url string, ch chan *data.News, chDone chan bool) {
     doc.Find("div.story-body__inner").Find("div").Remove()
     body, _ := doc.Find("div.story-body__inner").Html()
 
+    imageUrl, ok := doc.Find("div.story-body__inner figure img").Attr("src")
+
+    if ok {
+        s := strings.Split(imageUrl, "/")
+        image.Get(imageUrl, "images/" + s[len(s)-1])
+    }
+
     ch <- &data.News{Headline: headline, BodyOriginal: body, PublishDate: tm.String()}
 }
 
@@ -51,7 +62,7 @@ func (bbc *Bbc) Scrape() []data.News {
         link, ok := a.Attr("href")
 
         if ok && a.Find("span.off-screen").Length() < 1 {
-            go crawl(bbc.Src.BaseUrl + link, chNews, chDone)
+            go bbc.crawl(bbc.Src.BaseUrl + link, chNews, chDone)
         } else {
             go skip(chDone)
         }

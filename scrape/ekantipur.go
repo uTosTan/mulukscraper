@@ -8,6 +8,10 @@ type Ekantipur struct {
     Src *data.Source
 }
 
+func (ek *Ekantipur) crawl(url string, ch chan *data.News, chDone chan bool) {
+
+}
+
 func (ek *Ekantipur) Scrape() []data.News {
     var news []data.News
 
