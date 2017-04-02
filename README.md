@@ -3,10 +3,24 @@
 
 ## Installation
 
-```
+
 Install Go and follow the instructions to setup a workspace
+```
+Download [Go](https://golang.org/)
+Setup Go [Workspaces](https://golang.org/doc/code.html#Workspaces)
+```
+
 Clone the Repository
-Run go ./... and go install from app/ directory
+```
+git clone https://github.com/uTosTan/mulukscraper.git
+```
+
+Install Application
+```
+Run these commands from app/ directory
+
+go get ./... 
+go install 
 ```
 
 *to be continued*
