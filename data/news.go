@@ -67,7 +67,7 @@ func (n *Sites) Get() {
 func (cs *CategorySites) Get() {
     db := GetInstance().Connection;
 
-    rows, err := db.Query("SELECT site.SiteId, site.SiteUrl, site.SiteName, site.IsActive, categorysite.CategoryUrl FROM site INNER JOIN categorysite ON categorysite.SiteId=site.SiteId WHERE site.IsActive=?", 1)
+    rows, err := db.Query("SELECT Site.SiteId, Site.SiteUrl, Site.SiteName, Site.IsActive, CategorySite.CategoryUrl FROM Site INNER JOIN CategorySite ON CategorySite.SiteId=Site.SiteId WHERE Site.IsActive=?", 1)
     if err != nil {
         log.Fatal(err)
     }
