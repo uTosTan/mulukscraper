@@ -12,7 +12,7 @@ import (
 )
 
 type Bbc struct {
-    Src *data.Source
+    Src *data.Source // Is this really necessary..
 }
 
 func (bbc *Bbc) crawl(url string, ch chan *data.News, chDone chan bool) {
