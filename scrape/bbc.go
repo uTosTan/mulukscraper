@@ -50,8 +50,8 @@ func skip(chDone chan bool) {
     chDone <- true
 }
 
-func (bbc *Bbc) Scrape() []data.News {
-    doc, _ := goquery.NewDocument(bbc.Src.BaseUrl + bbc.Src.Category)
+func (bbc *Bbc) Scrape(category string) []data.News {
+    doc, _ := goquery.NewDocument(bbc.Src.BaseUrl + category)
     chNews := make(chan *data.News)
     chDone := make(chan bool)
     var news []data.News
