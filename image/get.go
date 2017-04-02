@@ -8,10 +8,16 @@ import(
 )
 
 func Get(url *string, path string) {
-    img, _ := os.Create(path)
+    img, err := os.Create(path)
+    if err != nil {
+        log.Fatal(err)
+    }
     defer img.Close()
 
-    resp, _ := http.Get(*url)
+    resp, err := http.Get(*url)
+    if err != nil {
+        log.Fatal(err)
+    }
     defer resp.Body.Close()
 
     if _, err := io.Copy(img, resp.Body); err != nil {
