@@ -22,9 +22,9 @@ func (bbc *Bbc) crawl(url string, ch chan *data.News, chDone chan bool) {
 
     var tm time.Time
     doc, _ := goquery.NewDocument(url)
-
     headline := doc.Find("div.story-body h1.story-body__h1").Text()
     timestamp, ok := doc.Find("div.date.date--v2").Attr("data-seconds")
+    storyBody := doc.Find("div.story-body__inner")
 
     if ok {
         i, _ := strconv.ParseInt(timestamp, 10, 64)
@@ -33,14 +33,14 @@ func (bbc *Bbc) crawl(url string, ch chan *data.News, chDone chan bool) {
         tm = time.Now()
     }
 
-    doc.Find("div.story-body__inner").Find("div").Remove()
-    body, _ := doc.Find("div.story-body__inner").Html()
+    imageUrl, ok := storyBody.Find("figure img").Attr("src")
 
-    imageUrl, ok := doc.Find("div.story-body__inner figure img").Attr("src")
+    storyBody.Find("div").Remove()
+    body, _ := storyBody.Html()
 
     if ok {
         s := strings.Split(imageUrl, "/")
-        image.Get(imageUrl, "images/" + s[len(s)-1])
+        image.Get(&imageUrl, "images/" + s[len(s)-1])
     }
 
     ch <- &data.News{Headline: headline, BodyOriginal: body, PublishDate: tm.String()}
@@ -50,8 +50,8 @@ func skip(chDone chan bool) {
     chDone <- true
 }
 
-func (bbc *Bbc) Scrape(category string) []data.News {
-    doc, _ := goquery.NewDocument(bbc.Src.BaseUrl + category)
+func (bbc *Bbc) Scrape(category *string) []data.News {
+    doc, _ := goquery.NewDocument(bbc.Src.BaseUrl + *category)
     chNews := make(chan *data.News)
     chDone := make(chan bool)
     var news []data.News

@@ -1,7 +1,6 @@
 package data
 
 import (
-    "database/sql"
     _"github.com/go-sql-driver/mysql"
     "log"
 )
@@ -27,16 +26,28 @@ type Site struct {
     IsActive bool
 }
 
+type Category struct {
+    CategoryId int
+    CategoryName string
+}
+
+type CategorySite struct {
+    Site Site
+    Categorie Category
+    CategoryUrl string
+}
+
 type Sites struct {
     Sites []Site
 }
 
+type CategorySites struct {
+    CategorySites []CategorySite
+}
+
+
 func (n *Sites) Get() {
-    db, err := sql.Open("mysql", "scrapenepal:suraj!2@/scrapenepal")
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer db.Close()
+    db := GetInstance().Connection;
 
     rows, err := db.Query("SELECT SiteId, SiteUrl, SiteName, IsActive FROM Site WHERE IsActive=?", 1)
     if err != nil {
@@ -50,5 +61,23 @@ func (n *Sites) Get() {
             log.Fatal(err)
         }
         n.Sites = append(n.Sites, s)
+    }
+}
+
+func (cs *CategorySites) Get() {
+    db := GetInstance().Connection;
+
+    rows, err := db.Query("SELECT site.SiteId, site.SiteUrl, site.SiteName, site.IsActive, categorysite.CategoryUrl FROM site INNER JOIN categorysite ON categorysite.SiteId=site.SiteId WHERE site.IsActive=?", 1)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer rows.Close()
+
+    for rows.Next() {
+        var i CategorySite
+        if err := rows.Scan(&i.Site.SiteId, &i.Site.SiteUrl, &i.Site.SiteName, &i.Site.IsActive, &i.CategoryUrl); err != nil {
+            log.Fatal(err)
+        }
+        cs.CategorySites = append(cs.CategorySites, i)
     }
 }
