@@ -3,8 +3,8 @@ package data
 import (
     "sync"
     "database/sql"
-    _"github.com/go-sql-driver/mysql"
     "log"
+    "fmt"
 )
 
 type singleton struct {
@@ -16,7 +16,11 @@ var once sync.Once
 
 func GetInstance() *singleton {
     once.Do(func() {
-        db, err := sql.Open("mysql", "scrapenepal:suraj!2@/scrapenepal")
+        config := GetConfigInstance()
+
+        dsn := fmt.Sprintf("%v:%v@/%v", config.Configuration.Db.Username, config.Configuration.Db.Password, config.Configuration.Db.Database)
+
+        db, err := sql.Open("mysql", dsn)
         if err != nil {
             log.Fatal(err)
         }
