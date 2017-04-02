@@ -3,12 +3,10 @@
 
 ## Installation
 
-
-Install Go and follow the instructions to setup a workspace
-```
 Download [Go](https://golang.org/)
+
 Setup Go [Workspaces](https://golang.org/doc/code.html#Workspaces)
-```
+
 
 Clone the Repository
 ```
