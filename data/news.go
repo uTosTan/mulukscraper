@@ -45,9 +45,32 @@ type CategorySites struct {
     CategorySites []CategorySite
 }
 
+type SiteMap struct {
+    Sites map[string]string
+}
+
+func (sm *SiteMap) Get() {
+    db := GetInstance().Connection
+    rows, err := db.Query("SELECT SiteName, SiteUrl FROM Site WHERE IsActive=?", 1)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer rows.Close()
+
+    sm.Sites = make(map[string]string)
+
+    for rows.Next() {
+        var name, url string
+        if err := rows.Scan(&name, &url); err != nil {
+            log.Fatal(err)
+        }
+        sm.Sites[name] = url
+    }
+}
+
 
 func (n *Sites) Get() {
-    db := GetInstance().Connection;
+    db := GetInstance().Connection
 
     rows, err := db.Query("SELECT SiteId, SiteUrl, SiteName, IsActive FROM Site WHERE IsActive=?", 1)
     if err != nil {
@@ -65,7 +88,7 @@ func (n *Sites) Get() {
 }
 
 func (cs *CategorySites) Get() {
-    db := GetInstance().Connection;
+    db := GetInstance().Connection
 
     rows, err := db.Query("SELECT Site.SiteId, Site.SiteUrl, Site.SiteName, Site.IsActive, CategorySite.CategoryUrl FROM Site INNER JOIN CategorySite ON CategorySite.SiteId=Site.SiteId WHERE Site.IsActive=?", 1)
     if err != nil {
