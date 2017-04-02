@@ -1,1 +1,1 @@
-Web Crawler and Scraper for Muluk
+News Crawler and Scraper for Muluk
