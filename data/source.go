@@ -1,5 +1,6 @@
 package data
 
+// Source struct
 type Source struct {
-    BaseUrl string
+	BaseURL string
 }
